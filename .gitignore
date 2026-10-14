@@ -1,0 +1,16 @@
+# Maven
+target/
+*.jar
+
+# Output Hadoop temporários e de execução
+output/
+output_temp/
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# OS
+Thumbs.db
+.DS_Store
