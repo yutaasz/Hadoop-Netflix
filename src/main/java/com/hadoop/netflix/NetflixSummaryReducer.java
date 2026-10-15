@@ -74,7 +74,8 @@ public class NetflixSummaryReducer extends Reducer<Text, Text, Text, Text> {
             top5.add(wordList.get(i));
         }
 
-        // 2. Palavras menos repetidas (ordenadas por frequencia crescente e ordem alfabetica)
+        // 2. Palavras menos repetidas (ordenadas por frequencia crescente e ordem
+        // alfabetica)
         Collections.sort(wordList, new Comparator<WordCount>() {
             @Override
             public int compare(WordCount a, WordCount b) {
@@ -90,7 +91,8 @@ public class NetflixSummaryReducer extends Reducer<Text, Text, Text, Text> {
         for (WordCount wc : wordList) {
             if (wc.word.matches("^[a-z]+$")) {
                 bottom5Alpha.add(wc);
-                if (bottom5Alpha.size() == 5) break;
+                if (bottom5Alpha.size() == 5)
+                    break;
             }
         }
 
@@ -107,62 +109,56 @@ public class NetflixSummaryReducer extends Reducer<Text, Text, Text, Text> {
         sb.append("                       ANALISE DO DATASET NETFLIX TITLES\n");
         sb.append("================================================================================\n\n");
 
-        sb.append("1. NORMALIZACAO DE TEXTO (0,5 pts) e STOPWORDS (1,0 pt):\n");
-        sb.append("   - Minusculas: Aplicado (toLowerCase)\n");
-        sb.append("   - Remocao de pontuacao e caracteres especiais: Aplicado (regex [^a-z0-9\\s])\n");
-        sb.append("   - Stopwords ignoradas: Sim (stopwords da lingua inglesa)\n\n");
-
-        sb.append("2. TITULO COM DESCRICAO MAIS LONGA (0,5 pt):\n");
+        sb.append("TITULO COM DESCRICAO MAIS LONGA:\n");
         String[] longestParts = longestDesc.split("\t", 2);
         if (longestParts.length == 2) {
-            sb.append("   - Sem stopwords: \"").append(longestParts[1]).append("\" (").append(longestParts[0]).append(" palavras)\n");
+            sb.append("   - Sem stopwords: \"").append(longestParts[1]).append("\" (").append(longestParts[0])
+                    .append(" palavras)\n");
         } else {
             sb.append("   - Sem stopwords: ").append(longestDesc).append("\n");
         }
         String[] longestRawParts = longestDescRaw.split("\t", 2);
         if (longestRawParts.length == 2) {
-            sb.append("   - Total bruto (com stopwords): \"").append(longestRawParts[1]).append("\" (").append(longestRawParts[0]).append(" palavras)\n\n");
+            sb.append("   - com stopwords: \"").append(longestRawParts[1]).append("\" (").append(longestRawParts[0])
+                    .append(" palavras)\n\n");
         } else {
-            sb.append("   - Total bruto (com stopwords): ").append(longestDescRaw).append("\n\n");
+            sb.append("   - com stopwords: ").append(longestDescRaw).append("\n\n");
         }
 
-        sb.append("3. TITULO COM DESCRICAO MAIS CURTA (0,5 pt):\n");
+        sb.append("TITULO COM DESCRICAO MAIS CURTA:\n");
         String[] shortestParts = shortestDesc.split("\t", 2);
         if (shortestParts.length == 2) {
-            sb.append("   - Sem stopwords: \"").append(shortestParts[1]).append("\" (").append(shortestParts[0]).append(" palavras)\n");
+            sb.append("   - Sem stopwords: \"").append(shortestParts[1]).append("\" (").append(shortestParts[0])
+                    .append(" palavras)\n");
         } else {
             sb.append("   - Sem stopwords: ").append(shortestDesc).append("\n");
         }
         String[] shortestRawParts = shortestDescRaw.split("\t", 2);
         if (shortestRawParts.length == 2) {
-            sb.append("   - Total bruto (com stopwords): \"").append(shortestRawParts[1]).append("\" (").append(shortestRawParts[0]).append(" palavras)\n\n");
+            sb.append("   - com stopwords: \"").append(shortestRawParts[1]).append("\" (").append(shortestRawParts[0])
+                    .append(" palavras)\n\n");
         } else {
-            sb.append("   - Total bruto (com stopwords): ").append(shortestDescRaw).append("\n\n");
+            sb.append("   - com stopwords: ").append(shortestDescRaw).append("\n\n");
         }
 
-        sb.append("4. TOP 5 PALAVRAS MAIS REPETIDAS NAS DESCRICOES (1,0 pt):\n");
+        sb.append("TOP 5 PALAVRAS MAIS REPETIDAS NAS DESCRICOES:\n");
         for (int i = 0; i < top5.size(); i++) {
             WordCount wc = top5.get(i);
             sb.append(String.format("   %d) '%s' - %d ocorrencias\n", (i + 1), wc.word, wc.count));
         }
         sb.append("\n");
 
-        sb.append("5. TOP 5 PALAVRAS MENOS REPETIDAS NAS DESCRICOES (1,0 pt):\n");
+        sb.append("TOP 5 PALAVRAS MENOS REPETIDAS NAS DESCRICOES:\n");
         sb.append("   [Palavras textuais / alfabeticas - todas com 1 ocorrencia]:\n");
         for (int i = 0; i < bottom5Alpha.size(); i++) {
             WordCount wc = bottom5Alpha.get(i);
             sb.append(String.format("   %d) '%s' - %d ocorrencia\n", (i + 1), wc.word, wc.count));
         }
-        sb.append("   [Tokens alfanumericos gerais - todos com 1 ocorrencia]:\n");
-        for (int i = 0; i < bottom5All.size(); i++) {
-            WordCount wc = bottom5All.get(i);
-            sb.append(String.format("   %d) '%s' - %d ocorrencia\n", (i + 1), wc.word, wc.count));
-        }
         sb.append("\n");
 
-        sb.append("6. NUMERO TOTAL DE PALAVRAS EM TODAS AS DESCRICOES (0,5 pts):\n");
-        sb.append("   - Total de palavras (ignorando stopwords): ").append(totalWords).append(" palavras\n");
-        sb.append("   - Total de palavras brutas (incluindo stopwords): ").append(totalWordsRaw).append(" palavras\n");
+        sb.append("NUMERO TOTAL DE PALAVRAS EM TODAS AS DESCRICOES:\n");
+        sb.append("   - Total de palavras sem stopwords: ").append(totalWords).append(" palavras\n");
+        sb.append("   - Total de palavras brutas com stop words: ").append(totalWordsRaw).append(" palavras\n");
         sb.append("================================================================================\n");
 
         outKey.set("RELATORIO_FINAL");
